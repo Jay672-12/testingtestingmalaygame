@@ -62,6 +62,7 @@ class MalayQuizlet {
         this.sessionWords = [];
         this.pendingWords = [];
         this.uploadFile = null;
+        this.autoProgressTimer = null; // Timer for auto-progression
         
         // Enhanced quiz features
         this.wordStats = {}; // Track performance for each word
@@ -95,11 +96,11 @@ class MalayQuizlet {
         this.malayWordEl = document.getElementById('malay-word');
         this.answerInput = document.getElementById('answer-input');
         this.submitBtn = document.getElementById('submit-btn');
-        this.nextBtn = document.getElementById('next-btn');
         this.feedback = document.getElementById('feedback');
         this.feedbackIcon = document.getElementById('feedback-icon');
         this.feedbackText = document.getElementById('feedback-text');
         this.correctAnswerEl = document.getElementById('correct-answer');
+        this.progressIndicator = document.getElementById('progress-indicator');
         this.correctCountEl = document.getElementById('correct-count');
         this.totalWordsEl = document.getElementById('total-words');
         this.progressFill = document.getElementById('progress-fill');
@@ -148,7 +149,6 @@ class MalayQuizlet {
                 this.checkAnswer();
             }
         });
-        this.nextBtn.addEventListener('click', () => this.nextWord());
 
         // Add word functionality
         this.addWordForm.addEventListener('submit', (e) => {
@@ -328,6 +328,12 @@ class MalayQuizlet {
     }
 
     nextWord() {
+        // Clear any existing timer when manually advancing
+        if (this.autoProgressTimer) {
+            clearTimeout(this.autoProgressTimer);
+            this.autoProgressTimer = null;
+        }
+
         if (this.sessionWords.length === 0) {
             this.sessionWords = this.shuffleArray([...this.words]);
         }
@@ -343,6 +349,7 @@ class MalayQuizlet {
         this.submitBtn.disabled = false;
         this.nextBtn.classList.add('hidden');
         this.feedback.classList.add('hidden');
+        this.progressIndicator.classList.add('hidden');
         
         this.updateProgress();
     }
@@ -406,6 +413,11 @@ class MalayQuizlet {
         this.answerInput.disabled = true;
         this.submitBtn.disabled = true;
 
+        // Clear any existing timer
+        if (this.autoProgressTimer) {
+            clearTimeout(this.autoProgressTimer);
+        }
+
         // Handle slash-separated answers for display
         const displayAnswers = correctAnswer.split('/').map(ans => ans.trim()).join(' / ');
 
@@ -415,6 +427,14 @@ class MalayQuizlet {
             this.feedbackIcon.textContent = '✅';
             this.feedbackText.textContent = 'Correct! Well done!';
             this.correctAnswerEl.textContent = '';
+            
+            // Show progress indicator for 0.5 seconds
+            this.showProgressIndicator(500, 'Correct! Moving to next...');
+            
+            // Auto-progress after 0.5 seconds for correct answers
+            this.autoProgressTimer = setTimeout(() => {
+                this.nextWord();
+            }, 500);
         } else {
             this.answerInput.classList.add('incorrect');
             this.feedback.className = 'feedback incorrect';
@@ -425,11 +445,19 @@ class MalayQuizlet {
             } else {
                 this.correctAnswerEl.textContent = `The correct answer is: ${correctAnswer}`;
             }
+            
+            // Show progress indicator for 2 seconds
+            this.showProgressIndicator(2000, 'Moving to next in 2 seconds...');
+            
+            // Auto-progress after 2 seconds for wrong answers
+            this.autoProgressTimer = setTimeout(() => {
+                this.nextWord();
+            }, 2000);
         }
 
         this.feedback.classList.remove('hidden');
-        this.nextBtn.classList.remove('hidden');
-        this.nextBtn.focus();
+        // Show progress indicator
+        // No longer need next button for auto-progression
     }
 
     showEncouragement() {
@@ -855,6 +883,17 @@ class MalayQuizlet {
                 successDiv.remove();
             }
         }, 3000);
+    }
+
+    showProgressIndicator(duration, text) {
+        this.progressIndicator.textContent = text;
+        this.progressIndicator.className = 'progress-indicator';
+        this.progressIndicator.style.display = 'block';
+        
+        // Auto-hide after duration
+        setTimeout(() => {
+            this.progressIndicator.style.display = 'none';
+        }, duration);
     }
 }
 
