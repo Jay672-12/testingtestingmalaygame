@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+    <h1>Testing JavaScript</h1>
+    <div id="test"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.getElementById('test').innerHTML = 'XLSX library loaded: ' + (typeof XLSX !== 'undefined');
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Malay Quizlet - Learn Bahasa Melayu</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-view="quiz">
+                <span class="nav-icon">📚</span>
+                <span class="nav-label">Study</span>
+            </button>
+            <button class="nav-btn" data-view="add">
+                <span class="nav-icon">➕</span>
+                <span class="nav-label">Add Word</span>
+            </button>
+            <button class="nav-btn" data-view="stats">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Progress</span>
+            </button>
+        </nav>
+
+        <!-- Quiz View -->
+        <div id="quiz-view" class="view active">
+            <header class="quiz-header">
+                <h1>Malay Quizlet</h1>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="stats-row">
+                    <span class="stat">✅ <span id="correct-count">0</span></span>
+                    <span class="stat">📝 <span id="total-words">0</span> words</span>
+                </div>
+            </header>
+
+            <main class="quiz-main">
+                <div class="word-card">
+                    <div class="word-label">What does this mean?</div>
+                    <div class="malay-word" id="malay-word">Loading...</div>
+                </div>
+
+                <div class="answer-section">
+                    <input type="text" 
+                           id="answer-input" 
+                           placeholder="Type English meaning..." 
+                           autocomplete="off"
+                           autocorrect="off"
+                           autocapitalize="off">
+                    
+                    <button id="submit-btn" class="submit-btn">Check Answer</button>
+                </div>
+
+                <div id="feedback" class="feedback hidden">
+                    <div class="feedback-icon" id="feedback-icon"></div>
+                    <div class="feedback-text" id="feedback-text"></div>
+                    <div class="correct-answer" id="correct-answer"></div>
+                </div>
+
+                <button id="next-btn" class="next-btn hidden">Next Word →</button>
+            </main>
+        </div>
+
+        <!-- Add Word View -->
+        <div id="add-view" class="view">
+            <header class="add-header">
+                <h1>Add New Word</h1>
+                <p>Expand your vocabulary</p>
+            </header>
+
+            <main class="add-main">
+                <div class="add-tabs">
+                    <button class="tab-btn active" data-tab="manual">Manual Entry</button>
+                    <button class="tab-btn" data-tab="upload">Excel Upload</button>
+                </div>
+
+                <div id="manual-tab" class="tab-content active">
+                    <form id="add-word-form" class="add-form">
+                        <div class="form-group">
+                            <label for="new-malay">Malay Word</label>
+                            <input type="text" 
+                                   id="new-malay" 
+                                   placeholder="e.g., makan" 
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new-english">English Meaning</label>
+                            <input type="text" 
+                                   id="new-english" 
+                                   placeholder="e.g., eat" 
+                                   required>
+                        </div>
+
+                        <button type="submit" class="add-btn">Add Word</button>
+                    </form>
+                </div>
+
+                <div id="upload-tab" class="tab-content">
+                    <div class="upload-section">
+                        <div class="upload-area" id="upload-area">
+                            <div class="upload-icon">📁</div>
+                            <div class="upload-text">
+                                <h3>Upload Excel File</h3>
+                                <p>Column A: Malay words<br>Column B: English meanings</p>
+                            </div>
+                            <input type="file" 
+                                   id="file-input" 
+                                   accept=".xlsx,.xls,.csv" 
+                                   hidden>
+                            <button type="button" class="upload-btn" id="upload-btn">
+                                Choose File
+                            </button>
+                        </div>
+                        
+                        <div id="upload-preview" class="upload-preview hidden">
+                            <h3>Upload Preview</h3>
+                            <div class="preview-stats">
+                                <span class="preview-stat">📝 Total: <span id="preview-total">0</span></span>
+                                <span class="preview-stat">✅ New: <span id="preview-new">0</span></span>
+                                <span class="preview-stat">🔄 Duplicates: <span id="preview-duplicates">0</span></span>
+                            </div>
+                            <div class="preview-actions">
+                                <button type="button" class="confirm-upload-btn" id="confirm-upload-btn">
+                                    Add New Words
+                                </button>
+                                <button type="button" class="cancel-upload-btn" id="cancel-upload-btn">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="upload-progress" class="upload-progress hidden">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="upload-progress-fill"></div>
+                            </div>
+                            <div class="progress-text" id="progress-text">Processing...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-words">
+                    <h3>Recently Added</h3>
+                    <div id="recent-words-list" class="recent-list"></div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Stats View -->
+        <div id="stats-view" class="view">
+            <header class="stats-header">
+                <h1>Your Progress</h1>
+                <p>Track your learning journey</p>
+            </header>
+
+            <main class="stats-main">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-words-stat">0</div>
+                        <div class="stat-label">Total Words</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="correct-answers-stat">0</div>
+                        <div class="stat-label">Correct Answers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="accuracy-stat">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="streak-stat">0</div>
+                        <div class="stat-label">Current Streak</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="reset-stats-btn" class="reset-btn">Reset Statistics</button>
+                    <button id="export-words-btn" class="export-btn">Export Words</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
